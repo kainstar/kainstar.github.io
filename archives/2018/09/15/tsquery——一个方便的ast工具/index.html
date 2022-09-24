@@ -1,0 +1,722 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KainStar">
+  <meta name="keywords" content="TypeScript,tsquery,ast">
+  
+    <meta name="description" content="前言最近在给公司的 web 框架做一个 vscode 的辅助插件，其中有个对需要路由一些文件进行解析，实现配置文件和对应文件的关联信息显示和跳转的功能。既然是对文件进行解析，很自然就会想到使用 ast 的方式来做，加上需要对 TypeScript 也进行支持，我便选择了使用 TypeScript 自带的 ast 工具来进行解析。 在一开始我通过 ts 的forEachChild方法遍历和对比节点的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tsquery——一个方便的ast查询工具">
+<meta property="og:url" content="https://kainstar.github.io/archives/2018/09/15/tsquery%E2%80%94%E2%80%94%E4%B8%80%E4%B8%AA%E6%96%B9%E4%BE%BF%E7%9A%84ast%E5%B7%A5%E5%85%B7/index.html">
+<meta property="og:site_name" content="Kainstar&#39;s Blog">
+<meta property="og:description" content="前言最近在给公司的 web 框架做一个 vscode 的辅助插件，其中有个对需要路由一些文件进行解析，实现配置文件和对应文件的关联信息显示和跳转的功能。既然是对文件进行解析，很自然就会想到使用 ast 的方式来做，加上需要对 TypeScript 也进行支持，我便选择了使用 TypeScript 自带的 ast 工具来进行解析。 在一开始我通过 ts 的forEachChild方法遍历和对比节点的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-09-15T07:06:05.000Z">
+<meta property="article:modified_time" content="2022-09-24T13:50:54.345Z">
+<meta property="article:author" content="KainStar">
+<meta property="article:tag" content="TypeScript">
+<meta property="article:tag" content="ast">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>tsquery——一个方便的ast查询工具 - Kainstar&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"kainstar.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":"UA-103626575-1","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Kainstar&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                主页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于我
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/banner.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="tsquery——一个方便的ast查询工具"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2018-09-15 15:06" pubdate>
+          2018年9月15日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          39 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">tsquery——一个方便的ast查询工具</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近在给公司的 web 框架做一个 vscode 的辅助插件，其中有个对需要路由一些文件进行解析，实现配置文件和对应文件的关联信息显示和跳转的功能。既然是对文件进行解析，很自然就会想到使用 ast 的方式来做，加上需要对 TypeScript 也进行支持，我便选择了使用 TypeScript 自带的 ast 工具来进行解析。</p>
+<p>在一开始我通过 ts 的<code>forEachChild</code>方法遍历和对比节点的<code>kind</code>属性来确定是否是我需要处理的节点，但是之后发现这个方式有几个缺点：</p>
+<ol>
+<li>当需要查找满足条件的子级的 ast 节点时，需要做多次比较</li>
+<li>对满足某一条件的多个不同类型的节点需要比较多次，编写满足条件麻烦</li>
+<li>对分布在同一文件中的多个同名标识符，不能统一提取和处理</li>
+</ol>
+<p>为了解决这些，我找到并引入了<a target="_blank" rel="noopener" href="https://github.com/phenomnomnominal/tsquery"><code>tsquery</code></a>这个库，它是 TypeScript 版的<a target="_blank" rel="noopener" href="https://github.com/estools/esquery"><code>esquery</code></a>，能够让我们使用 css 选择器的方式来快速查询满足指定条件的 TypeScript ast 节点（也支持 JavaScript）。</p>
+<span id="more"></span>
+
+<h2 id="比较-demo"><a href="#比较-demo" class="headerlink" title="比较 demo"></a>比较 demo</h2><p>在介绍 tsquery 的使用方式之前，我们先来看一个对比。</p>
+<p>对下面这段简单的代码：</p>
+<figure class="highlight ts"><figcaption><span>code.ts</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Animal</span> &#123;<br>  <span class="hljs-title function_">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">public</span> name: <span class="hljs-built_in">string</span></span>) &#123;&#125;<br>  <span class="hljs-title function_">move</span>(<span class="hljs-params">distanceInMeters: <span class="hljs-built_in">number</span> = <span class="hljs-number">0</span></span>) &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">$&#123;<span class="hljs-variable language_">this</span>.name&#125;</span> moved <span class="hljs-subst">$&#123;distanceInMeters&#125;</span>m.`</span>);<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>若我们要查找到 Animal 这个类的构造函数的所有参数并打印它们的名称，在使用 tsquery 之前，我们会编写这样一段代码：</p>
+<figure class="highlight ts"><figcaption><span>tsAnalyze.ts</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> &#123;<br>  <span class="hljs-title class_">ClassDeclaration</span>,<br>  createSourceFile,<br>  <span class="hljs-title class_">Node</span>,<br>  <span class="hljs-title class_">ScriptTarget</span>,<br>  <span class="hljs-title class_">ConstructorDeclaration</span>,<br>  <span class="hljs-title class_">SyntaxKind</span>,<br>&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;TypeScript&quot;</span>;<br><span class="hljs-keyword">import</span> &#123; code &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./code&quot;</span>;<br><br><span class="hljs-keyword">const</span> sourceFile = <span class="hljs-title function_">createSourceFile</span>(<br>  <span class="hljs-string">&quot;fileName&quot;</span>,<br>  code,<br>  <span class="hljs-title class_">ScriptTarget</span>.<span class="hljs-property">Latest</span>,<br>  <span class="hljs-literal">true</span><br>);<br>sourceFile.<span class="hljs-title function_">forEachChild</span>(findClass);<br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">findClass</span>(<span class="hljs-params">node: Node</span>): <span class="hljs-built_in">void</span> &#123;<br>  <span class="hljs-keyword">if</span> (node.<span class="hljs-property">kind</span> === <span class="hljs-title class_">SyntaxKind</span>.<span class="hljs-property">ClassDeclaration</span>) &#123;<br>    <span class="hljs-keyword">const</span> &#123; name &#125; = node <span class="hljs-keyword">as</span> <span class="hljs-title class_">ClassDeclaration</span>;<br>    <span class="hljs-keyword">if</span> (name &amp;&amp; name.<span class="hljs-property">text</span> === <span class="hljs-string">&quot;Animal&quot;</span>) &#123;<br>      node.<span class="hljs-title function_">forEachChild</span>(findConstructor);<br>      <span class="hljs-keyword">return</span>;<br>    &#125;<br>  &#125;<br>  node.<span class="hljs-title function_">forEachChild</span>(findClass);<br>&#125;<br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">findConstructor</span>(<span class="hljs-params">node: Node</span>): <span class="hljs-built_in">void</span> &#123;<br>  <span class="hljs-keyword">if</span> (node.<span class="hljs-property">kind</span> === <span class="hljs-title class_">SyntaxKind</span>.<span class="hljs-property">Constructor</span>) &#123;<br>    <span class="hljs-title function_">printParameters</span>(node <span class="hljs-keyword">as</span> <span class="hljs-title class_">ConstructorDeclaration</span>);<br>  &#125;<br>&#125;<br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">printParameters</span>(<span class="hljs-params">node: ConstructorDeclaration</span>) &#123;<br>  node.<span class="hljs-property">parameters</span>.<span class="hljs-title function_">forEach</span>(<span class="hljs-function">(<span class="hljs-params">parameter</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(parameter.<span class="hljs-property">name</span>.<span class="hljs-title function_">getText</span>());<br>  &#125;);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>而在我们引入了 tsquery 之后，只需要下面这么几行简单的代码：</p>
+<figure class="highlight ts"><figcaption><span>tsqueryAnalyze.ts</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> &#123; tsquery &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@phenomnomnominal/tsquery&quot;</span>;<br><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> ts <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;TypeScript&quot;</span>;<br><span class="hljs-keyword">import</span> &#123; code &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./code&quot;</span>;<br><br><span class="hljs-keyword">const</span> parameters = tsquery.<span class="hljs-property">query</span>&lt;ts.<span class="hljs-property">ParameterDeclaration</span>&gt;(<br>  code,<br>  <span class="hljs-string">&#x27;ClassDeclaration[name.name=&quot;Animal&quot;] &gt; Constructor &gt; Parameter&#x27;</span><br>);<br>parameters.<span class="hljs-title function_">forEach</span>(<span class="hljs-function">(<span class="hljs-params">param</span>) =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(param.<span class="hljs-property">name</span>.<span class="hljs-title function_">getText</span>()));<br></code></pre></td></tr></table></figure>
+
+<p>怎么样，是不是对比强烈，让你迫不及待得想把 tsquery 用到自己的项目中？</p>
+<h2 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h2><p>那么接下来，我就来介绍一下如何去使用 tsquery：</p>
+<h3 id="API"><a href="#API" class="headerlink" title="API"></a>API</h3><p>tsquery 对象提供了下面几个方法：</p>
+<ul>
+<li>ast:</li>
+</ul>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">function</span> <span class="hljs-title function_">ast</span>(<span class="hljs-params">source: <span class="hljs-built_in">string</span>, fileName?: <span class="hljs-built_in">string</span></span>): <span class="hljs-title class_">SourceFile</span>;<br></code></pre></td></tr></table></figure>
+
+<p>ast 方法的功能如同其名，就是接收源代码，返回一个解析后的 ast 语法树，实际上就是调用了 ts 的<code>createSourceFile</code>方法。</p>
+<ul>
+<li>parse:</li>
+</ul>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">function</span> <span class="hljs-title function_">parse</span>(<span class="hljs-params">selector: <span class="hljs-built_in">string</span>, options?: TSQueryOptions</span>): <span class="hljs-title class_">TSQuerySelectorNode</span>;<br></code></pre></td></tr></table></figure>
+
+<p>parse 方法接收一个规则字符串，这个字符串会被解析成 tsquery 的选择器对象并返回，再被用于下面的 match 方法中。</p>
+<ul>
+<li>match:</li>
+</ul>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">function</span> match&lt;T <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Node</span> = <span class="hljs-title class_">Node</span>&gt;(<br>  <span class="hljs-attr">ast</span>: <span class="hljs-title class_">Node</span> | <span class="hljs-title class_">TSQueryNode</span>&lt;T&gt;,<br>  <span class="hljs-attr">selector</span>: <span class="hljs-title class_">TSQuerySelectorNode</span>,<br>  options?: <span class="hljs-title class_">TSQueryOptions</span><br>): <span class="hljs-title class_">Array</span>&lt;<span class="hljs-title class_">TSQueryNode</span>&lt;T&gt;&gt;;<br></code></pre></td></tr></table></figure>
+
+<p>match 方法接收一个 ast 对象和一个 parse 解析后得到的选择器对象，返回从 ast 中搜索得到的所有满足选择器条件的节点的数组。</p>
+<p>结合上面三个函数，我们可以得到 tsquery 的基本使用方法：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> ast = tsquery.<span class="hljs-title function_">ast</span>(code); <span class="hljs-comment">// 获得ast语法树</span><br><span class="hljs-keyword">const</span> selector = tsquery.<span class="hljs-title function_">parse</span>(selectorStr); <span class="hljs-comment">// 获得选择器</span><br><span class="hljs-keyword">const</span> result = tsquery.<span class="hljs-title function_">match</span>(ast, selector); <span class="hljs-comment">// 查找节点</span><br></code></pre></td></tr></table></figure>
+
+<p>如果语法树和选择器可能被多次使用，则建议使用变量将它们分别保存下来，避免重复解析导致的资源浪费和时间开销（ast 的生成和遍历还是比较花时间的）。</p>
+<p>如果语法树和选择器不会被重复使用，那么可以使用更简单的方法 <code>query</code>。</p>
+<ul>
+<li>query:</li>
+</ul>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">function</span> query&lt;T <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Node</span> = <span class="hljs-title class_">Node</span>&gt;(<br>  <span class="hljs-attr">ast</span>: <span class="hljs-built_in">string</span> | <span class="hljs-title class_">Node</span> | <span class="hljs-title class_">TSQueryNode</span>&lt;T&gt;,<br>  <span class="hljs-attr">selector</span>: <span class="hljs-built_in">string</span>,<br>  options?: <span class="hljs-title class_">TSQueryOptions</span><br>): <span class="hljs-title class_">Array</span>&lt;<span class="hljs-title class_">TSQueryNode</span>&lt;T&gt;&gt;;<br></code></pre></td></tr></table></figure>
+
+<p>query 封装了 ast、parse 和 match 三个方法，可以更方便地完成一次查询，同时 tsquery 自身也是一个 query 方法。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> result = tsquery.<span class="hljs-title function_">query</span>(code, selectorStr);<br><span class="hljs-comment">// const result = tsquery(code, selectorStr);</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="选择器规则"><a href="#选择器规则" class="headerlink" title="选择器规则"></a>选择器规则</h3><ul>
+<li>通用选择器</li>
+</ul>
+<p>和 css 中的一样，<code>*</code>表示选择所有的节点。</p>
+<ul>
+<li>AST 节点类型选择器</li>
+</ul>
+<p>你可以直接使用一个 ast 节点的类型来当作查询的选择器，例如：类声明: <code>ClassDeclaration</code>，变量声明：<code>VariableDeclaration</code>等，就跟你使用 css 选择器选择某种 HTML 元素一样。</p>
+<ul>
+<li>属性选择器</li>
+</ul>
+<p>tsquery 支持使用 css 中属性选择器的方式来搜索满足属性条件的节点，你可以仅仅只声明一个属性的名称（例如：<code>[text]</code>），也可以指定属性的值所满足的条件（例如：<code>[text=&quot;foo&quot;]</code>），其中操作符可以是<code>=</code>、’!&#x3D;’、’&gt;’、’&lt;’、’&lt;&#x3D;’、’&gt;&#x3D;’，值也可以是字符串、数字、正则表达式中的任意一种。<br>tsquery 支持多级的属性选择，所以你也可以使用<code>.</code>来组合属性（例如：<code>[members.length&lt;3]</code>）。</p>
+<ul>
+<li>常见的后代、兄弟节点选择器等</li>
+</ul>
+<p>后代节点选择器：<code>node otherNode</code><br>子节点选择器：<code>node &gt; otherNode</code><br>同级节点选择器：<code>node ~ otherNode</code><br>相邻节点选择器：<code>node + otherNode</code><br>群组选择器：<code>node, otherNode</code></p>
+<ul>
+<li>各种特殊的选择器</li>
+</ul>
+<p>not 选择器：<code>:not(ClassDeclaration)</code> 用来选择所有不是类声明的节点<br>has 选择器：<code>IfStatement:has([left.text=&quot;foo&quot;])</code> 用来选择含有符合<code>[left.text=&quot;foo&quot;]</code>属性选择器的子节点的 if 语句<br>第 n 个节点的选择器：包含 <code>:first-child</code>、<code>:last-child</code>、<code>:nth-child(n)</code>、<code>:nth-last-child(n)</code> 这几种选择器，其中需要注意的是，tsquery 并不支持<code>an+b</code>这种类型的序号匹配<br>类型选择器：区分于 AST 节点类型选择器，这个选择器是用来选择某种共通类型的（比如所有声明、所有表达式等），目前支持的有<code>:statement</code>, <code>:expression</code>, <code>:declaration</code>, <code>:function</code>, 和 <code>:pattern</code></p>
+<p>以上所有的选择器都可以混合使用</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>tsquery 是一个非常方便和值得使用的 ast 辅助工具，它使用极为简单的 api 和学习成本较低的选择器规则，提供了对抽象和复杂的 AST 语法树较强的查询能力，可以在我们对 AST 进行处理时节省大量的编写成本。</p>
+<p>如果你对 tsquery 的选择器规则抱有疑问，可以在 <a target="_blank" rel="noopener" href="https://tsquery-playground.firebaseapp.com/">TSQuery Playground</a> 上进行在线的测试。</p>
+<p><strong>参考内容：</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://medium.com/@phenomnominal/easier-TypeScript-tooling-with-tsquery-d74f04f2b29d">Easier TypeScript tooling with TSQuery</a></li>
+</ul>
+<p>在文章最后打个招聘广告：</p>
+<p>有赞招聘前端工程师，实习、校招、社招都可，具体要求可以参考<a target="_blank" rel="noopener" href="https://job.youzan.com/">https://job.youzan.com/</a>，同时您也可以将简历投递到我的内推邮箱：<a href="mailto:&#122;&#104;&#x61;&#110;&#103;&#x73;&#x68;&#105;&#107;&#x61;&#105;&#64;&#121;&#111;&#117;&#x7a;&#97;&#x6e;&#46;&#99;&#111;&#109;">&#122;&#104;&#x61;&#110;&#103;&#x73;&#x68;&#105;&#107;&#x61;&#105;&#64;&#121;&#111;&#117;&#x7a;&#97;&#x6e;&#46;&#99;&#111;&#109;</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%8A%80%E6%80%9D/" class="category-chain-item">技思</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/TypeScript/">#TypeScript</a>
+      
+        <a href="/tags/ast/">#ast</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>tsquery——一个方便的ast查询工具</div>
+      <div>https://kainstar.github.io/archives/2018/09/15/tsquery——一个方便的ast工具/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KainStar</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2018年9月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/archives/2018/05/21/%E7%94%A8%E7%BA%AF%E5%89%8D%E7%AB%AF%E7%9A%84%E6%96%B9%E5%BC%8F%E6%9D%A5%E5%AE%9E%E7%8E%B0%E5%9B%BE%E7%89%87%E8%BD%AC%E5%AD%97%E7%AC%A6%E7%94%BB/" title="用纯前端的方式来实现图片转字符画">
+                        <span class="hidden-mobile">用纯前端的方式来实现图片转字符画</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

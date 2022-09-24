@@ -1,0 +1,933 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KainStar">
+  <meta name="keywords" content="javascript,正则表达式">
+  
+    <meta name="description" content="前言正则表达式（Regular Expression）是一种常见的用于处理字符串的操作公式。根据事先定义好的一些字符的组合的规则来检索，过滤，替换字符串。它的优点有：  可以用简单的方式做到字符串的复杂控制 灵活性，功能性强  但是正则表达式也有一个致命缺点，就是对于刚刚接触正则表达式的人来说，它实在是太难懂了，这也导致了很多人在一开始学正则表达式时因为无法理解而放弃。 我在慕课网上学习时看到一个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaScript的正则学习笔记">
+<meta property="og:url" content="https://kainstar.github.io/archives/2016/08/17/JavaScript%E7%9A%84%E6%AD%A3%E5%88%99%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Kainstar&#39;s Blog">
+<meta property="og:description" content="前言正则表达式（Regular Expression）是一种常见的用于处理字符串的操作公式。根据事先定义好的一些字符的组合的规则来检索，过滤，替换字符串。它的优点有：  可以用简单的方式做到字符串的复杂控制 灵活性，功能性强  但是正则表达式也有一个致命缺点，就是对于刚刚接触正则表达式的人来说，它实在是太难懂了，这也导致了很多人在一开始学正则表达式时因为无法理解而放弃。 我在慕课网上学习时看到一个">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-08-16T16:02:36.000Z">
+<meta property="article:modified_time" content="2022-09-24T13:50:54.349Z">
+<meta property="article:author" content="KainStar">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="正则表达式">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>JavaScript的正则学习笔记 - Kainstar&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"kainstar.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":"UA-103626575-1","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Kainstar&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                主页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于我
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/banner.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="JavaScript的正则学习笔记"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2016-08-17 00:02" pubdate>
+          2016年8月17日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          54 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">JavaScript的正则学习笔记</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>正则表达式（Regular Expression）是一种常见的用于处理字符串的操作公式。根据事先定义好的一些字符的组合的规则来检索，过滤，替换字符串。它的优点有：</p>
+<ol>
+<li>可以用简单的方式做到字符串的复杂控制</li>
+<li>灵活性，功能性强</li>
+</ol>
+<p>但是正则表达式也有一个致命缺点，就是对于刚刚接触正则表达式的人来说，它实在是太难懂了，这也导致了很多人在一开始学正则表达式时因为无法理解而放弃。</p>
+<p>我在慕课网上学习时看到一个<a target="_blank" rel="noopener" href="http://www.imooc.com/learn/706">关于 JavaScript 的正则表达式的课程</a>，本着巩固自身认识，也方便日后查看的心态，将其内容总结成该博客笔记。</p>
+<span id="more"></span>
+
+<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><ol>
+<li><p>本文使用的语言是 JavaScript，会使用到一些 JavaScript 中的正则表达式使用方法，对于其他语言的正则表达式用法请查阅官方文档或其他资料。</p>
+</li>
+<li><p>本文中用字符串的 replace 方法来展示正则表达式的使用效果，该方法的作用是根据正则表达式来对字符串内匹配的内容进行替换</p>
+</li>
+</ol>
+<h2 id="正则表达式笔记"><a href="#正则表达式笔记" class="headerlink" title="正则表达式笔记"></a>正则表达式笔记</h2><h3 id="JavaScript-的正则表达式初始化方法"><a href="#JavaScript-的正则表达式初始化方法" class="headerlink" title="JavaScript 的正则表达式初始化方法"></a>JavaScript 的正则表达式初始化方法</h3><ol>
+<li><p>使用字面量实例化（书写方式：把正则内容写到两个斜线中间）</p>
+<pre><code class="hljs">var reg = /\bis\b/g;
+</code></pre>
+</li>
+<li><p>使用 RegExp 对象实例化</p>
+<pre><code class="hljs">    var reg = new RegExp(&#39;\\bis\\b&#39;,&#39;g&#39;);
+</code></pre>
+<p>注意：使用 RegExp 对象实例化时，因为参数是字符串，所以要多加一个反斜线\来转义反斜线</p>
+</li>
+</ol>
+<h3 id="正则表达式的修饰符"><a href="#正则表达式的修饰符" class="headerlink" title="正则表达式的修饰符"></a>正则表达式的修饰符</h3><p>在字符串中是最后一个斜杠后所加的字符就是正则表达式的修饰符（在正则构造函数中是第二个参数），可以多个修饰符叠加使用。</p>
+<ol>
+<li><p><strong>g: global</strong> 表示全文搜索，不添加时搜索到第一个匹配就停止搜索</p>
+<pre><code class="hljs">var reg = /\bis\b/g;
+var raw = &#39;He is a boy! He like playing game! Who is he?&#39;;
+raw.replace(reg,&#39;IS&#39;);
+//替换结果：He IS a boy! He like playing game! Who IS he?
+</code></pre>
+</li>
+<li><p><strong>i: ignore case</strong> 表示忽略大小写，默认情况下大小写敏感</p>
+<pre><code class="hljs">var reg = /a/ig;
+var raw = &#39;AaaA&#39;;
+raw.replace(reg,&#39;b&#39;);
+//替换结果：bbbb
+</code></pre>
+</li>
+<li><p><strong>m:multiple lines</strong> 多行搜索</p>
+<pre><code class="hljs">var reg = /a/gm;
+// 反斜线\可以表示多行字符串
+var raw = 	&#39;aa\
+            dcba\
+            abcd&#39;;
+raw.replace(reg,&#39;A&#39;);
+//替换结果：AAdcbAAbcd
+</code></pre>
+</li>
+</ol>
+<h3 id="基本类型字符"><a href="#基本类型字符" class="headerlink" title="基本类型字符"></a>基本类型字符</h3><p>在正则表达式中，有两种基本类型字符：原义文本字符和元字符。</p>
+<p>原义文本字符指的是原本意义的字符，写了什么就是什么，例如：<code>var reg = /a/ </code>表示创建一个匹配字符 a 的正则表达式。</p>
+<p>元字符指的是在正则中含有特殊含义（用来代替一个或多个字符）的非字母字符(*+?$^.|(){}[]和一系列\转义字符，在之后会详细解释) 例如：<code>var reg = /\d/</code>表示创建一个匹配一个数字的正则表达式。</p>
+<h3 id="元字符详解"><a href="#元字符详解" class="headerlink" title="元字符详解"></a>元字符详解</h3><h4 id="字符类"><a href="#字符类" class="headerlink" title="字符类"></a>字符类</h4><p>用元字符[]来构建一个简单的类，把在[]中的字符归为一类，表达式可以匹配这一类的字符。例如：[abc]则是将 a、b、c 归为一类。表达式可以匹配 a 或 b 或 c</p>
+<pre><code class="hljs">var reg = /[abc]/g;
+var raw = &#39;a1b2c3d4&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：X1X2X3d4
+</code></pre>
+<h4 id="字符类取反"><a href="#字符类取反" class="headerlink" title="字符类取反"></a>字符类取反</h4><p>用元字符^创建反向类，表示不属于这一类的内容。例如：[^abc]则是表示不是字符 a 或 b 或 c 的内容</p>
+<pre><code class="hljs">var reg = /[^abc]/g;
+var raw = &#39;a1b2c3d4&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：aXbXcXXX
+</code></pre>
+<p>但是如果要匹配数字 0 到 9，是不是要把 9 个数字都写一遍呢？不是，为了简化书写，可以在字符类中使用 - 符号表示范围，如果想在字符类中匹配 - 符号，就要把 - 符号加到字符类开头或者结尾处（在字符类内部可以连续写好几个范围类）</p>
+<pre><code class="hljs">var reg = /[-0-9a-zA-Z]/g;			//0-9 等同于 0123456789
+var raw = &#39;2016-08-16 NanJing&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：XXXXXXXXXX XXXXXXX
+</code></pre>
+<h4 id="预定义字符类"><a href="#预定义字符类" class="headerlink" title="预定义字符类"></a>预定义字符类</h4><p>用来匹配常见的字符类的一类元字符，可以分为边界匹配字符和非边界匹配字符</p>
+<p><strong>非边界匹配字符：</strong></p>
+<p>. 表示除了回车和换行以外的所有字符（[^\r\n]）</p>
+<pre><code class="hljs">var reg = /./g;
+var raw = &#39;a1b2c3d4&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：XXXXXXXX
+</code></pre>
+<p>\d 表示数字字符（[0-9]）</p>
+<pre><code class="hljs">var reg = /\d/g;
+var raw = &#39;a1b2c3d4&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：aXbXcXdX
+</code></pre>
+<p>\D 表示非数字字符（[^0-9]）</p>
+<pre><code class="hljs">var reg = /\D/g;
+var raw = &#39;a1b2c3d4&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：X1X2X3X4
+</code></pre>
+<p>\s 表示空白符（[\t\n\x0B\f\r]）</p>
+<pre><code class="hljs">var reg = /\s/g;
+var raw = &#39;a1 b2 c3 d4&#39;;
+var result = raw.replace(reg,&#39;X&#39;);
+//替换结果：a1Xb2Xc3Xd4
+</code></pre>
+<p>\S 表示非空白符（[^\t\n\x0b\f\r]）</p>
+<pre><code class="hljs">var reg = /\S/g;
+var raw = &#39;a1 b2 c3 d4&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：XX XX XX XX
+</code></pre>
+<p>\w 单词字符(字母、数字、下划线)（[a-zA-Z_0-9]）</p>
+<pre><code class="hljs">var reg = /\w/g;
+var raw = &#39;a1 b2 c3 d4&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：XX XX XX XX
+</code></pre>
+<p>\W 非单词字符（[^a-za-z_0-9]）<br>var reg &#x3D; &#x2F;\W&#x2F;g;<br>var raw &#x3D; ‘a1 b2 c3 d4’;<br>raw.replace(reg,’X’);<br>&#x2F;&#x2F;替换结果：a1Xb2Xc3Xd4</p>
+<p><strong>边界匹配字符：</strong></p>
+<p>^ 表示开始</p>
+<pre><code class="hljs">var reg = /^./g;
+var raw = &#39;a1 b2 c3 d4&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：X1 b2 c3 d4
+</code></pre>
+<p>$ 表示结束</p>
+<pre><code class="hljs">var reg = /.$/g;
+var raw = &#39;a1 b2 c3 d4&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：a1 b2 c3 dX
+</code></pre>
+<p>\b 表示单词边界</p>
+<pre><code class="hljs">var reg = /\ba1\b/g;
+var raw = &#39;a1a1 a1&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：a1a1 X
+</code></pre>
+<p>\B 表示非单词边界</p>
+<pre><code class="hljs">var reg = /\Ba1\b/g;
+var raw = &#39;a1a1 a1&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：a1X a1
+</code></pre>
+<h3 id="量词"><a href="#量词" class="headerlink" title="量词"></a>量词</h3><p>正则表达式中的量词可以用来表示匹配的次数</p>
+<p>? 表示零次或一次(有或没有)</p>
+<pre><code class="hljs">var reg = /ab?c/g;
+var raw = &#39;ac abc abbc&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：X X abbc
+</code></pre>
+<p>+ 表示一次或多次(至少出现一次)</p>
+<pre><code class="hljs">var reg = /ab+c/g;
+var raw = &#39;ac abc abbc&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：ac X X
+</code></pre>
+<p>* 表示出现零次或一次或多次(任意次数)</p>
+<pre><code class="hljs">var reg = /ab+c/g;
+var raw = &#39;ac abc abbc&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：X X X
+</code></pre>
+<p>{n} 表示出现 n 次</p>
+<pre><code class="hljs">var reg = /ab&#123;1&#125;c/g;
+var raw = &#39;ac abc abbc&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：ac X abbc
+</code></pre>
+<p>{n,m} 表示出现 n 次到 m 次</p>
+<pre><code class="hljs">var reg = /ab&#123;1,2&#125;c/g;
+var raw = &#39;ac abc abbc abbbc&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：ac X X abbbc
+</code></pre>
+<p>{n,} 表示至少出现 n 次</p>
+<pre><code class="hljs">var reg = /ab&#123;1&#125;c/g;
+var raw = &#39;ac abc abbc abbbc&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：ac X X X
+</code></pre>
+<h3 id="贪婪模式和非贪婪模式"><a href="#贪婪模式和非贪婪模式" class="headerlink" title="贪婪模式和非贪婪模式"></a>贪婪模式和非贪婪模式</h3><p><strong>贪婪模式：</strong>尽可能多的进行匹配，匹配成功后继续尝试直到无法匹配（正则表达式在默认情况下就是贪婪模式）</p>
+<pre><code class="hljs">var reg = /\d&#123;1,3&#125;/;
+var raw = &#39;12345&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：X45
+</code></pre>
+<p><strong>非贪婪模式：</strong>尽可能少的进行匹配，一旦匹配成功就不再继续尝试（用法：在量词后面加上?）</p>
+<pre><code class="hljs">var reg = /\d&#123;1,3&#125;?/;
+var raw = &#39;12345&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：X2345
+</code></pre>
+<h3 id="分组"><a href="#分组" class="headerlink" title="分组"></a>分组</h3><p>用()可以将正则表达式分组成不同的子串（量词可以作用到一个分组）</p>
+<pre><code class="hljs">var reg = /([a-z]\d)&#123;3&#125;/g;
+var raw = &#39;a1b2c3d4&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：Xd4
+</code></pre>
+<p><strong>或的表示：</strong>用|可以表示或，使用或时最好用分组括号将几个项包括在一起，方便查看理解</p>
+<pre><code class="hljs">var reg = /a(11|22)/g;
+var raw = &#39;a11 a22 a33&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：X X a33
+</code></pre>
+<p><strong>分组的反向引用：</strong>用$符号表示捕获到分组的内容，可以用$加上对应序号的形式引用</p>
+<pre><code class="hljs">var reg = /(\d&#123;4&#125;)-(\d&#123;2&#125;)-(\d&#123;2&#125;)/g;
+var raw = &#39;2016-08-18&#39;;
+raw.replace(reg,&#39;$2/$3/$1&#39;);
+//替换结果：08/18/2016
+</code></pre>
+<p><strong>忽略分组：</strong>如果不希望捕获到某些分组，只需要在分组前加上?:即可</p>
+<pre><code class="hljs">var reg = /(\d&#123;4&#125;)-(\d&#123;2&#125;)-(?:\d&#123;2&#125;)/g;
+var raw = &#39;2016-08-18&#39;;
+raw.replace(reg,&#39;$2/$1&#39;);
+//替换结果：08/2016
+</code></pre>
+<h3 id="前瞻"><a href="#前瞻" class="headerlink" title="前瞻"></a>前瞻</h3><p>正则表达式是从文本头部向尾部进行解析，文本尾部方向就是‘前’。前瞻就是在正则表达式匹配到规则的时候，向前检查是否符合断言。（JavaScript 不支持后顾，因此在本文中不对后顾进行解释）</p>
+<p>符合断言的称为<strong>“肯定&#x2F;正向”</strong>匹配，不符合的称为<strong>“否定&#x2F;负向”</strong>匹配。</p>
+<p>用 exp 表示要匹配的正则表达式，assert 表示断言部分(也是一个正则)来说明前瞻所用的公式。</p>
+<p><strong>正向前瞻：</strong> exp(?&#x3D;assert)</p>
+<pre><code class="hljs">var reg = /\w(?=\d)/g;
+var raw = &#39;a1b2c3d4&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：X1X2X3X4
+</code></pre>
+<p><strong>负向前瞻：</strong> exp(?!assert)</p>
+<pre><code class="hljs">var reg = /\w(?!\d)/g;
+var raw = &#39;a1b2c3d4&#39;;
+raw.replace(reg,&#39;X&#39;);
+//替换结果：aXbXcXdX
+</code></pre>
+<p>注：断言部分不参与匹配，仅作为一个验证部分存在。</p>
+<p>常用的正则表达式所需的知识点已经写在了上面，接下来会介绍一下 JavaScript 中正则表达式有关的属性和方法</p>
+<hr>
+<h3 id="RegExp-对象"><a href="#RegExp-对象" class="headerlink" title="RegExp 对象"></a>RegExp 对象</h3><p>RegExp 对象的属性：</p>
+<p><strong>global:</strong> 是否全文搜索，默认为 false</p>
+<p><strong>ignore case:</strong> 是否大小写敏感，默认为 false</p>
+<p><strong>multiline:</strong> 多行搜素，默认为 false</p>
+<p><strong>lastIndex:</strong> 当前表达式匹配内容的最后一个字符的下一个位置</p>
+<p><strong>source:</strong> 正则表达式的文本字符串</p>
+<p>RegExp 对象的方法：</p>
+<p><strong>test(str)</strong> 测试字符串 str 中是否存在能匹配正则表达式的部分，有则返回 true，没有则返回 false。该方法每次执行后，lastIndex 都会发生相应的改变</p>
+<p><strong>exec(str)</strong> 使用正则表达式模式对字符串执行搜索，并将更新全局 RegExp 对象的属性以反映匹配结果。如果没有匹配的文本就返回 null，有就返回一个结果数组。</p>
+<pre><code class="hljs">这个结果数组有两个属性：
+
+    index 声明匹配文本的第一个字符的位置
+
+    input 存放被检索的字符串 str
+
+除此之外，使用非全局的正则对象的exec方法时，返回的结果数组的第一个元素是匹配到的字符串，第二个元素是匹配到的第一个分组，第三个元素是匹配到的第二个分组（以此类推）
+</code></pre>
+<h3 id="字符串-String-对象"><a href="#字符串-String-对象" class="headerlink" title="字符串 String 对象"></a>字符串 String 对象</h3><p>字符串 String 的方法：</p>
+<p><strong>search(str||reg)</strong> 方法用于检索字符串中指定的子字符串，或检索与正则表达式相匹配的子字符串，方法返回第一个匹配结果的 index，搜索不到就返回-1。search 方法不执行全局匹配，会忽略修饰符 g，并且总是从字符串的开始位置进行检索。</p>
+<p><strong>match(reg)</strong> 方法检索字符串，找到一个或多个和正则表达式相匹配的文本，修饰符 g 有影响。match 非全局调用的返回和 RegExp 对象的 exec 方法的返回一样；而全局调用返回的是字符串中所有的匹配子串，没有 index 和 input 属性</p>
+<p><strong>split()</strong> 方法用于分割字符串成数组，其分割符可以用正则来表示</p>
+<p><strong>replace()</strong> 方法用于替换字符串中的一部分成另外一部分，replace 方法有三种参数传递方式：</p>
+<ol>
+<li><p><strong>replace(str,replaceStr)</strong></p>
+<p>示例：</p>
+<pre><code class="hljs">&#39;a1b2c3d4&#39;.replace(&#39;a&#39;, &#39;X&#39;);
+//替换结果：X1b2c3d4
+</code></pre>
+</li>
+<li><p><strong>replace(reg,replaceStr)</strong></p>
+<p>示例：</p>
+<pre><code class="hljs">&#39;a1b2c3d4&#39;.replace(/\d/g, &#39;X&#39;);
+//替换结果：aXbXcXdX
+</code></pre>
+</li>
+<li><p><strong>replace(reg,function)</strong> 其中 function 在每次匹配替换的时候都被调用，它有四种参数:</p>
+<ol>
+<li>匹配字符串 <strong>match</strong></li>
+<li>正则表达式分组内容，有多少个分组就有多少个该参数 <strong>group1,group2,…</strong></li>
+<li>匹配项在字符串中的位置 <strong>index</strong></li>
+<li>原字符串 <strong>origin</strong></li>
+</ol>
+</li>
+</ol>
+<p>示例:</p>
+<pre><code class="hljs">&#39;a1b2c3d4&#39;.replace(/\d/g, function(match,index,origin) &#123;
+    console.log(index);
+    return parseInt(match)+1;
+&#125;)
+//替换结果：a2b3c4d5
+
+&#39;a1b2c3d4&#39;.replace(/(\d)(\w)(\d)/g, function(match,group1,group2,group3,index,origin) &#123;
+    console.log(index);
+    return group1+group3;
+&#125;)
+//替换结果：a12c34
+</code></pre>
+<hr>
+<p>到此为止，介绍 JavaScript 的正则表达式的笔记全部完成，对阅读到这里的读者表示感谢，也希望这篇笔记能够帮上你的忙。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%8A%80%E6%80%9D/" class="category-chain-item">技思</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/javascript/">#javascript</a>
+      
+        <a href="/tags/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">#正则表达式</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>JavaScript的正则学习笔记</div>
+      <div>https://kainstar.github.io/archives/2016/08/17/JavaScript的正则学习笔记/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KainStar</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2016年8月17日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/archives/2016/08/21/github-pages%E4%B8%AD%E5%A6%82%E4%BD%95%E5%BC%95%E7%94%A8%E5%85%B6%E4%BB%96%E9%A1%B9%E7%9B%AE/" title="github pages中如何引用其他项目">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">github pages中如何引用其他项目</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/archives/2016/08/09/hexo%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/" title="Hexo搭建记录">
+                        <span class="hidden-mobile">Hexo搭建记录</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

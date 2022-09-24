@@ -1,0 +1,718 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KainStar">
+  <meta name="keywords" content="vuejs,fullpage">
+  
+    <meta name="description" content="前言已经有好久没有更新博客了，大三下了要准备找实习了，才发现自己很多东西都不会，所以赶紧找了个现在流行的 MVVM 框架学习一下。我学习的是 Vue，所以拿 Vue 写了一个 FullPage 的模板，可以供自己和其他人使用。 项目的地址是：https:&#x2F;&#x2F;github.com&#x2F;kainstar&#x2F;vue-fullpage 演示效果在这里">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用vue制作FullPage页面">
+<meta property="og:url" content="https://kainstar.github.io/archives/2017/04/05/%E4%BD%BF%E7%94%A8vue%E5%88%B6%E4%BD%9Cfullpage%E9%A1%B5%E9%9D%A2/index.html">
+<meta property="og:site_name" content="Kainstar&#39;s Blog">
+<meta property="og:description" content="前言已经有好久没有更新博客了，大三下了要准备找实习了，才发现自己很多东西都不会，所以赶紧找了个现在流行的 MVVM 框架学习一下。我学习的是 Vue，所以拿 Vue 写了一个 FullPage 的模板，可以供自己和其他人使用。 项目的地址是：https:&#x2F;&#x2F;github.com&#x2F;kainstar&#x2F;vue-fullpage 演示效果在这里">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-04-04T16:11:29.000Z">
+<meta property="article:modified_time" content="2022-09-24T13:50:54.387Z">
+<meta property="article:author" content="KainStar">
+<meta property="article:tag" content="vue">
+<meta property="article:tag" content="fullpage">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>使用vue制作FullPage页面 - Kainstar&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"kainstar.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":"UA-103626575-1","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Kainstar&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                主页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于我
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/banner.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="使用vue制作FullPage页面"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2017-04-05 00:11" pubdate>
+          2017年4月5日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          49 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">使用vue制作FullPage页面</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>已经有好久没有更新博客了，大三下了要准备找实习了，才发现自己很多东西都不会，所以赶紧找了个现在流行的 MVVM 框架学习一下。我学习的是 Vue，所以拿 Vue 写了一个 FullPage 的模板，可以供自己和其他人使用。</p>
+<p>项目的地址是：<a target="_blank" rel="noopener" href="https://github.com/kainstar/vue-fullpage">https://github.com/kainstar/vue-fullpage</a></p>
+<p><a href="https://kainstar.github.io/vue-fullpage">演示效果在这里</a></p>
+<span id="more"></span>
+
+<h2 id="项目讲解"><a href="#项目讲解" class="headerlink" title="项目讲解"></a>项目讲解</h2><p>为了加深理解，我把我制作这个 FullPage 页面的思路和流程记录下来，也可以给其他和我一样的初学者一个参考。</p>
+<h3 id="分解思路"><a href="#分解思路" class="headerlink" title="分解思路"></a>分解思路</h3><p>首先，我根据 Vue 的组件开发思想，把这个 FullPage 页面分为两个主要的组件模块：页面组件（Page）和页面控制组件（PageController）。除了这两个组件模块之外，还有一个整合的 App.vue 文件。</p>
+<p>其中，Page 组件主要负责每个 FullPage 页面的样式和位置控制，而 PageController 组件则用来发起页面的切换请求。</p>
+<p>因为 Vue 是单向数据流形式的，因此将所有需要的数据都定义在 App.vue 文件中，由 App 组件向下传递数据。</p>
+<h3 id="数据需求分析"><a href="#数据需求分析" class="headerlink" title="数据需求分析"></a>数据需求分析</h3><p>要制作一个 FullPage 页面，每个 Page 页面需要的是页面自身的内容（页面的内容和样式配置），而控制器所需要的数据有当前正在显示的页面以及总的页面数，用这两个属性计算出其他需要的属性。</p>
+<p>其中，总页面数即是 Page 总数，有多少个 Page，就有多少个 Page 的配置，因此可以通过计算 Page 配置信息对象的数量来获得总页面数。</p>
+<p>我在 App.vue 的组件 data 中定义了两个属性：</p>
+<ul>
+<li>currentPage 表示的是当前页面的序号（从 1 开始计算）；</li>
+<li>options 是一个数组，其中的每一个对象表示的是对应序号的页面的配置信息，可以通过修改里面的对象属性从而改变对应 Page 的样式。</li>
+</ul>
+<p>Page 组件只需要知道当前页面是第几个页面和自身的配置，因此只含有两个属性：</p>
+<ul>
+<li>currentPage</li>
+<li>option 表示自身的配置</li>
+</ul>
+<p>PageController 需要对页面进行切换控制，因此需要两个属性：</p>
+<ul>
+<li>currentPage</li>
+<li>pageNum 表示总的页面数量</li>
+</ul>
+<h3 id="编写页面样式"><a href="#编写页面样式" class="headerlink" title="编写页面样式"></a>编写页面样式</h3><p><strong>App 组件的结构为：</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;app&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;app&quot;</span>&gt;</span><br>  <span class="hljs-comment">&lt;!-- page为单独的页面组件，page内可以编写任意的页面内容 --&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">page</span> <span class="hljs-attr">:currentPage</span>=<span class="hljs-string">&quot;currentPage&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">page</span>&gt;</span><br>  <span class="hljs-comment">&lt;!-- page-controller为控制器组件 --&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">page-controller</span></span><br><span class="hljs-tag">    <span class="hljs-attr">:pageNum</span>=<span class="hljs-string">&quot;pageNum&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">:currentPage</span>=<span class="hljs-string">&quot;currentPage&quot;</span></span><br><span class="hljs-tag">    @<span class="hljs-attr">changePage</span>=<span class="hljs-string">&quot;changePage&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">:arrowsType</span>=<span class="hljs-string">&quot;arrowsType&quot;</span></span><br><span class="hljs-tag">  &gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">page-controller</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>App 组件主要样式：</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-comment">/* 页面宽高为100%，overflow为hidden隐藏溢出部分 */</span><br><span class="hljs-selector-tag">html</span>,<br><span class="hljs-selector-tag">body</span> &#123;<br>  <span class="hljs-attribute">margin</span>: <span class="hljs-number">0</span>;<br>  <span class="hljs-attribute">padding</span>: <span class="hljs-number">0</span>;<br>  <span class="hljs-attribute">height</span>: <span class="hljs-number">100%</span>;<br>  <span class="hljs-attribute">width</span>: <span class="hljs-number">100%</span>;<br>  <span class="hljs-attribute">overflow</span>: hidden;<br>&#125;<br><span class="hljs-selector-class">.app</span> &#123;<br>  <span class="hljs-attribute">height</span>: <span class="hljs-number">100%</span>;<br>  <span class="hljs-attribute">width</span>: <span class="hljs-number">100%</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>Page 组件结构为：</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">section</span></span><br><span class="hljs-tag">  <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;page&quot;</span></span><br><span class="hljs-tag">  <span class="hljs-attr">v-if</span>=<span class="hljs-string">&quot;options&quot;</span></span><br><span class="hljs-tag">  <span class="hljs-attr">:style</span>=<span class="hljs-string">&quot;&#123;background:options.background,color:options.color||&#x27;#fff&#x27;&#125;&quot;</span></span><br><span class="hljs-tag">  <span class="hljs-attr">:class</span>=<span class="hljs-string">&quot;&#123;&#x27;page-before&#x27;: options.index &lt; currentPage,&#x27;page-after&#x27;: options.index &gt; currentPage&#125;&quot;</span></span><br><span class="hljs-tag">&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">:class</span>=<span class="hljs-string">&quot;&#123;&#x27;page-center&#x27;: options.isCenter&#125;&quot;</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">slot</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">slot</span>&gt;</span><br>  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">section</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">section</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;page&quot;</span> <span class="hljs-attr">v-else</span>&gt;</span>页面正在渲染中。。。<span class="hljs-tag">&lt;/<span class="hljs-name">section</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>其中 slot 内为在 App.vue 的 page 标签内编写的 html 内容，并且根据 Page 组件内的 option 属性，为 Page 页面添加不同的样式（包括背景颜色、字体颜色、居中等，而且可以自由扩展）</p>
+<p><strong>Page 组件的主要样式为：</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-class">.page</span> &#123;<br>  <span class="hljs-attribute">position</span>: absolute;<br>  <span class="hljs-attribute">width</span>: <span class="hljs-number">100%</span>;<br>  <span class="hljs-attribute">height</span>: <span class="hljs-number">100%</span>;<br>  <span class="hljs-attribute">transition</span>: all <span class="hljs-number">0.5s</span> ease <span class="hljs-number">0s</span>;<br>&#125;<br><span class="hljs-selector-class">.page-before</span> &#123;<br>  <span class="hljs-attribute">transform</span>: <span class="hljs-built_in">translate3d</span>(<span class="hljs-number">0</span>, -<span class="hljs-number">100%</span>, <span class="hljs-number">0</span>);<br>&#125;<br><span class="hljs-selector-class">.page-after</span> &#123;<br>  <span class="hljs-attribute">transform</span>: <span class="hljs-built_in">translate3d</span>(<span class="hljs-number">0</span>, <span class="hljs-number">100%</span>, <span class="hljs-number">0</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>通过比较当前页面的 index 与 currentPage 的大小，可以判断 Page 组件处于之前的页面，当前的页面和之后的页面三个状态中的哪一种。</p>
+<p>将所有页面都用 absolute 定位在同一个位置上，对于处于之前的页面的 Page，添加 page-before 类标签，使其在 Y 轴上向上偏移自身高度距离，同理，对之后的页面做 Y 轴上向下的自身高度偏移。</p>
+<p>在 page 标签上添加 transition 样式，使其在切换时可以产生动画效果。</p>
+<p><strong>PageController 组件的结构为：</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">nav</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;controller&quot;</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">button</span></span><br><span class="hljs-tag">    <span class="hljs-attr">v-if</span>=<span class="hljs-string">&quot;arrowsType != &#x27;no&#x27;&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;prev-btn&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">:class</span>=<span class="hljs-string">&quot;&#123;moving:arrowsType === &#x27;animate&#x27;&#125;&quot;</span></span><br><span class="hljs-tag">    @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;changePage(prevIndex)&quot;</span></span><br><span class="hljs-tag">  &gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">li</span></span><br><span class="hljs-tag">      @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;changePage(index)&quot;</span></span><br><span class="hljs-tag">      <span class="hljs-attr">v-for</span>=<span class="hljs-string">&quot;index in pageNum&quot;</span></span><br><span class="hljs-tag">      <span class="hljs-attr">:key</span>=<span class="hljs-string">&quot;&#x27;controller-&#x27;+index&quot;</span></span><br><span class="hljs-tag">      <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;controller-item&quot;</span></span><br><span class="hljs-tag">    &gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span><br>  <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">button</span></span><br><span class="hljs-tag">    <span class="hljs-attr">v-if</span>=<span class="hljs-string">&quot;arrowsType != &#x27;no&#x27;&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;next-btn&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">:class</span>=<span class="hljs-string">&quot;&#123;moving:arrowsType === &#x27;animate&#x27;&#125;&quot;</span></span><br><span class="hljs-tag">    @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;changePage(nextIndex)&quot;</span></span><br><span class="hljs-tag">  &gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">nav</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>PageController 组件中分为两块，控制上下滚动的上下箭头按钮和控制所有页面的 ul 列表。</p>
+<p>因为 PageController 中的样式较多，因此不在文章中详细说明，只做简单介绍。</p>
+<p>button 和 ul 标签用 fixed 定位，使其处于整个页面的上方、下方和右侧。</p>
+<p>button 使用 rotate 和 border 属性，制作出箭头的样式，并添加对应的动画效果（可以通过传递 props 选择关闭）。</p>
+<h3 id="编写页面逻辑"><a href="#编写页面逻辑" class="headerlink" title="编写页面逻辑"></a>编写页面逻辑</h3><h4 id="切换页面逻辑"><a href="#切换页面逻辑" class="headerlink" title="切换页面逻辑"></a>切换页面逻辑</h4><p>因为所有的页面切换都是由 PageController 发起，而控制 currentPage 的组件并不是 PageController，所以需要有一个父子组件事件，由子组件 PageController 发起，传递一个参数表示要切换到第几个页面，因此在 PageController 中定义一个 method：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs javascript">changePage (index) &#123;<br>	<span class="hljs-variable language_">this</span>.$emit(<span class="hljs-string">&#x27;changePage&#x27;</span>, index);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>父组件接受该事件并调用自己定义的 changePage 方法，修改自身的 currentPage 属性</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs javascript">changePage (index) &#123;<br>	<span class="hljs-comment">// 改变page</span><br>	<span class="hljs-variable language_">this</span>.<span class="hljs-property">currentPage</span> = index;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="箭头按钮上下滚动"><a href="#箭头按钮上下滚动" class="headerlink" title="箭头按钮上下滚动"></a>箭头按钮上下滚动</h4><p>为了实现上下滚动，需要知道当前页面的前一个页面和后一个页面分别是第几个页面，因此可以使用计算属性，计算出前一个和后一个页面的 index 值：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// PageController.vue</span><br>nextIndex () &#123;<br>	<span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">currentPage</span> === <span class="hljs-variable language_">this</span>.<span class="hljs-property">pageNum</span>) &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">currentPage</span> + <span class="hljs-number">1</span>;<br>	&#125;<br>&#125;,<br>prevIndex () &#123;<br>	<span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">currentPage</span> === <span class="hljs-number">1</span>) &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">pageNum</span>;<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">currentPage</span> - <span class="hljs-number">1</span>;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>在点击箭头时，将对应的 nextIndex 或 prevIndex 值当做参数传给 changePage 方法。</p>
+<h4 id="滚轮滚动和移动端滚动"><a href="#滚轮滚动和移动端滚动" class="headerlink" title="滚轮滚动和移动端滚动"></a>滚轮滚动和移动端滚动</h4><p>滚轮滚动和移动端滚动主要依靠 window 的监听事件，根据传入的 event 属性，计算出页面是应该向上还是向下滚动，将需要滚动的方向作为参数传递给处理函数 handler。</p>
+<p>因为代码略长，因此不全部显示在文章中，只显示处理函数相关逻辑</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">let</span> _this = <span class="hljs-variable language_">this</span>;<br><span class="hljs-keyword">let</span> timer = <span class="hljs-literal">null</span>;<br><span class="hljs-keyword">function</span> <span class="hljs-title function_">scrollHandler</span>(<span class="hljs-params">direction</span>) &#123;<br>  <span class="hljs-comment">// 防止重复触发滚动事件</span><br>  <span class="hljs-keyword">if</span> (timer != <span class="hljs-literal">null</span>) &#123;<br>    <span class="hljs-keyword">return</span>;<br>  &#125;<br>  <span class="hljs-keyword">if</span> (direction === <span class="hljs-string">&quot;down&quot;</span>) &#123;<br>    _this.<span class="hljs-title function_">changePage</span>(_this.<span class="hljs-property">nextIndex</span>);<br>  &#125; <span class="hljs-keyword">else</span> &#123;<br>    _this.<span class="hljs-title function_">changePage</span>(_this.<span class="hljs-property">prevIndex</span>);<br>  &#125;<br>  timer = <span class="hljs-built_in">setTimeout</span>(<span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-built_in">clearTimeout</span>(timer);<br>    timer = <span class="hljs-literal">null</span>;<br>  &#125;, <span class="hljs-number">500</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>需要注意的一点是，移动端做滚动判断时，要求 touches 和 changedTouches 之间需要一定的间隔，不然容易误触发滚动事件。</p>
+<h4 id="options-属性的分发"><a href="#options-属性的分发" class="headerlink" title="options 属性的分发"></a>options 属性的分发</h4><p>为了使使用者更加方便地编写页面内容而不在意具体的页面序号，我采用了自动对 page 内的 option 赋值的方法。其实现原理是在 App.vue 文件中，使用钩子函数 mounted，对 page 中的 option 属性进行设置。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs javascript">mounted () &#123;<br>	<span class="hljs-variable language_">this</span>.<span class="hljs-property">$children</span>.<span class="hljs-title function_">forEach</span>(<span class="hljs-function">(<span class="hljs-params">child, index</span>) =&gt;</span> &#123;<br>		<span class="hljs-comment">// 动态设置各个page内的options</span><br>		<span class="hljs-keyword">if</span> (child.<span class="hljs-property">option</span> === <span class="hljs-literal">null</span>) &#123;<br>			<span class="hljs-keyword">let</span> childOption = <span class="hljs-variable language_">this</span>.<span class="hljs-property">options</span>[index];<br>			<span class="hljs-variable language_">this</span>.$set(childOption,<span class="hljs-string">&#x27;index&#x27;</span>,index+<span class="hljs-number">1</span>);<br>			child.<span class="hljs-property">option</span> = childOption;<br>		&#125;<br>	&#125;);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="高级属性：新的钩子函数"><a href="#高级属性：新的钩子函数" class="headerlink" title="高级属性：新的钩子函数"></a>高级属性：新的钩子函数</h4><p>为了满足部分使用者的需求，我在设置了两个钩子函数：beforeLeave 和 afterEnter。</p>
+<p>这两个钩子函数可以设置在对应页面的 options 属性对象中，并且含有一个默认的参数，为对应页面的 page 组件实例对象。</p>
+<p>其实现方式为在原先的 changePage 函数（App.vue）内添加新的逻辑：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs javascript">changePage (index) &#123;<br>	<span class="hljs-comment">// beforeLeave</span><br>	<span class="hljs-keyword">let</span> beforeIndex = <span class="hljs-variable language_">this</span>.<span class="hljs-property">currentPage</span> - <span class="hljs-number">1</span>;<br>	<span class="hljs-keyword">let</span> leaveFunction = <span class="hljs-variable language_">this</span>.<span class="hljs-property">options</span>[beforeIndex].<span class="hljs-property">beforeLeave</span>;<br>	<span class="hljs-keyword">typeof</span> leaveFunction === <span class="hljs-string">&#x27;function&#x27;</span> &amp;&amp; leaveFunction.<span class="hljs-title function_">call</span>(<span class="hljs-variable language_">this</span>,<span class="hljs-variable language_">this</span>.<span class="hljs-property">$children</span>[beforeIndex]);<br>	<span class="hljs-comment">// 改变page</span><br>	<span class="hljs-variable language_">this</span>.<span class="hljs-property">currentPage</span> = index;<br>	<span class="hljs-comment">// afterEnter</span><br>	<span class="hljs-keyword">let</span> nextIndex = index-<span class="hljs-number">1</span>;<br>	<span class="hljs-keyword">let</span> enterFunction = <span class="hljs-variable language_">this</span>.<span class="hljs-property">options</span>[nextIndex].<span class="hljs-property">afterEnter</span>;<br>	<span class="hljs-variable language_">this</span>.$nextTick(<span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) &#123;<br>		<span class="hljs-keyword">typeof</span> enterFunction === <span class="hljs-string">&#x27;function&#x27;</span> &amp;&amp; enterFunction.<span class="hljs-title function_">call</span>(<span class="hljs-variable language_">this</span>,<span class="hljs-variable language_">this</span>.<span class="hljs-property">$children</span>[nextIndex]);<br>	&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这篇文章记录了我开发一个 FullPage 页面的总体流程，将主要的逻辑重新顺理了一遍，还有一些小的细节没有写在文章中，有兴趣的可以去<a target="_blank" rel="noopener" href="https://github.com/kainstar/vue-fullpage">具体的项目页面</a>看源码，当然您要是觉得写得还可以，希望给个 star(<em>^__^</em>) ，如果您有什么想法，欢迎给我留言或加我的 QQ 私聊。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%8A%80%E6%80%9D/" class="category-chain-item">技思</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/vue/">#vue</a>
+      
+        <a href="/tags/fullpage/">#fullpage</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>使用vue制作FullPage页面</div>
+      <div>https://kainstar.github.io/archives/2017/04/05/使用vue制作fullpage页面/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KainStar</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2017年4月5日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/archives/2017/08/12/JS%E6%89%93%E5%8C%85%E5%B7%A5%E5%85%B7rollup%E2%80%94%E5%AE%8C%E5%85%A8%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/" title="JS打包工具rollup——完全入门指南">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">JS打包工具rollup——完全入门指南</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/archives/2016/12/20/HTML5%E7%89%B9%E6%80%A7%E7%B3%BB%E5%88%97%E2%80%94Notification/" title="HTML5特性——Notification">
+                        <span class="hidden-mobile">HTML5特性——Notification</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
