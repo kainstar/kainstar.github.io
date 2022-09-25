@@ -1,0 +1,56 @@
+index:
+  banner_img: /images/banner.png
+  slogan:
+    enable: true
+    text: 无趣是生活最大的敌人
+
+archive:
+  banner_img: /images/banner.png
+
+tag:
+  banner_img: /images/banner.png
+
+category:
+  banner_img: /images/banner.png
+
+post:
+  banner_img: /images/banner.png
+
+about:
+  name: "kainstar"
+  avatar: /images/avatar.jpg
+  banner_img: /images/banner.png
+  intro: "前端开发/爱好动漫和游戏/天性懒惰，偶尔好奇"
+  icons:
+
+navbar:
+  blog_title: Kainstar's Blog
+  menu:
+    - { key: "home", link: "/", icon: "iconfont icon-home-fill", name: "主页" }
+    - {
+        key: "archives",
+        link: "/archives/",
+        icon: "iconfont icon-archive-fill",
+        name: "归档",
+      }
+    - {
+        key: "categories",
+        link: "/categories/",
+        icon: "iconfont icon-category-fill",
+        name: "分类",
+      }
+    - {
+        key: "tag",
+        link: "/tags/",
+        icon: "iconfont icon-tags-fill",
+        name: "标签",
+      }
+    - {
+        key: "about",
+        link: "/about/",
+        icon: "iconfont icon-user-fill",
+        name: "关于我",
+      }
+
+web_analytics:
+  google: UA-103626575-1
